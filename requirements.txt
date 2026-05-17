@@ -1,0 +1,9 @@
+# Core dependencies
+numpy>=1.24
+faiss-cpu>=1.7
+streamlit>=1.30
+pytest>=7.0
+
+# Swap in for production embeddings (optional for local dev)
+sentence-transformers>=2.2   # local model, no GCP needed
+google-cloud-aiplatform       # real Vertex AI SDK
