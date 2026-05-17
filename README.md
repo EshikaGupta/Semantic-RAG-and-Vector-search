@@ -83,6 +83,24 @@ The raw user query is passed to a `MockGenerativeModel` (mocking `vertexai.gener
 
 ---
 
+## How Scoring Works
+Every document and every query gets converted into a list of numbers (a vector). Documents that are about similar topics end up with similar vectors.
+When you run a search, we compare your query's vector against every document's vector using cosine similarity — which measures the angle between two vectors. A score of 1.0 means identical direction (perfect match), 0.0 means completely unrelated.
+
+Query vector  →  [0.12, 0.87, 0.34, ...]
+Doc vector    →  [0.11, 0.85, 0.36, ...]
+Cosine score  →  0.98  ✅ very similar
+
+The top-K documents with the highest scores are returned as results.
+
+## Why cosine and not plain distance? 
+Because we only care about the direction of the vectors, not their size. A one-sentence doc and a ten-sentence doc about the same topic should score equally against a query — cosine handles this, Euclidean distance does not.
+
+## Why does Strategy B score higher? 
+A short query like "peak load" produces a narrow vector that only overlaps with documents using those exact words. Expanding it to "peak load, traffic spike, high concurrency, auto-scaling threshold" produces a wider vector that overlaps with more relevant documents — so scores go up across the board.
+
+---
+
 ## Migration to Vertex AI Vector Search (Matching Engine)
 
 1. **Export embeddings** — serialise all vectors as JSON Lines to Cloud Storage:
